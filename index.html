@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link href="styles/style.css" rel="stylesheet">
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+
+  <meta charset="utf-8" />
+  <title>気温と風速グラフ</title>
+</head>
+<body>
+  <h1>気温と風速グラフ</h1>
+  <canvas id="stage"></canvas>
+
+  <p>Weather Forecast APIで最大気温,最低気温,最大風速にチェックを入れ調べたい都市を選択後出てきたURLをhtmlに張り付けることでグラフが表示される</p>
+  
+  <hr/>
+  
+  <!-- 「Open-Meteo」の帰属表示 -->
+  <small><a href="https://open-meteo.com/en/docs">Weather Forecast APIはこちら</a></small>
+  
+  
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.6.0/dist/chart.min.js"></script>
+  <script>
+    // 気温と風速を取得する
+    const url = 'https://api.open-meteo.com/v1/forecast?latitude=35.69&longitude=139.69&daily=temperature_2m_max,temperature_2m_min,windspeed_10m_max&timezone=Asia%2FTokyo';
+
+    fetch(url)
+    .then(data => data.json())
+    .then(json => drawChart(json))
+
+
+    function drawChart(json) {
+      const mydata = {
+        labels: json.daily.time,
+        datasets: [{
+          label: '最高気温',
+          data: json.daily.temperature_2m_max,
+          borderColor: 'rgb(192, 75, 75)',
+        },{
+          label: '最低気温',
+          data: json.daily.temperature_2m_min,
+          borderColor: 'rgb(75, 75, 192)',
+        },{
+          label: '最大風速',
+          data: json.daily.windspeed_10m_max,
+          borderColor: 'rgb(75, 192, 75)',
+        }]
+      }
+
+      new Chart(document.getElementById('stage'), {
+        type: 'line',
+        data: mydata,
+      });
+    }
+
+  </script>
+</body>
+</html>
